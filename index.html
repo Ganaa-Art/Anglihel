@@ -286,118 +286,6 @@ function saveRec(){
   saveU();elapsed=0;
   alert('✅ Хадгалагдлаа! 💎 +'+gp+' ногоон оноо 🌿');
   go('prof');
-}
-
-// STATS
-function rStats(){
-  var u=cu,eb=earnedB(u),str=u.streak||0;
-  var wd=[28,45,0,62,38,71,55],wl=['Да','Мя','Лх','Пү','Ба','Бя','Ня'];
-  var mx=Math.max.apply(null,wd);
-  var bars=wd.map(function(v,i){return'<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;border-radius:5px 5px 0 0;height:'+(mx?Math.round(v/mx*72):4)+'px;background:'+(v>0?'linear-gradient(180deg,#52b788,#0d2818)':'rgba(255,255,255,.08)')+'"></div><div style="font-size:9px;color:#40916c;font-weight:700">'+wl[i]+'</div></div>'}).join('');
-  var cal=[...Array(28)].map(function(_,i){return'<div style="aspect-ratio:1;border-radius:4px;background:'+(i>=(28-str)?'linear-gradient(135deg,#52b788,#40916c)':'rgba(255,255,255,.06)')+';box-shadow:'+(i>=(28-str)?'0 2px 6px rgba(82,183,136,.3)':'none')+'"></div>'}).join('');
-  var bdg=BADGES.map(function(b){var g=eb.find(function(e){return e.id===b.id});return'<div class="gc" style="padding:12px 13px;background:'+(g?'rgba(82,183,136,.1)':'rgba(255,255,255,.03)')+';border-color:'+(g?'rgba(82,183,136,.25)':'rgba(255,255,255,.06)')+';opacity:'+(g?1:.45)+'"><div style="font-size:22px;margin-bottom:5px">'+b.icon+'</div><div style="font-size:12px;font-weight:800">'+b.name+'</div>'+(g?'<div style="margin-top:5px;font-size:9px;color:#52b788;font-weight:700">✓ Гүйцэтгэсэн</div>':'')+'</div>'}).join('');
-  document.getElementById('content').innerHTML='<div style="padding:18px 14px 32px"><div style="font-size:20px;font-weight:900;margin-bottom:16px">📊 Статистик</div><div class="gc" style="padding:16px 14px;margin-bottom:14px;background:rgba(255,255,255,.04)"><div style="font-size:12px;font-weight:800;margin-bottom:14px">7 хоногийн идэвх (мин)</div><div style="display:flex;align-items:flex-end;gap:8px;height:80px">'+bars+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'+[{l:'Нийт зай',v:(u.totalKm||0),u:'км',i:'🏃'},{l:'CO₂ хэмнэлт',v:(u.totalCO2||0),u:'кг',i:'🌍'},{l:'Ногоон оноо',v:(u.greenPoints||0),u:'оноо',i:'💎'},{l:'Streak',v:str,u:'өдөр',i:'🔥'},{l:'Үйл ажиллагаа',v:(u.activities||[]).length,u:'удаа',i:'✅'},{l:'Badge',v:eb.length+'/'+BADGES.length,u:'',i:'🎖️'}].map(function(s){return'<div class="gc" style="padding:13px 12px;background:rgba(255,255,255,.04)"><div style="font-size:20px;margin-bottom:5px">'+s.i+'</div><div style="font-size:20px;font-weight:900">'+s.v+' <span style="font-size:11px;color:#40916c;font-weight:600">'+s.u+'</span></div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">'+s.l+'</div></div>'}).join('')+'</div><div class="gc" style="padding:14px;margin-bottom:14px;background:rgba(255,255,255,.04)"><div style="font-size:12px;font-weight:800;margin-bottom:12px">🔥 Streak хуанли</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">'+cal+'</div><div style="font-size:11px;color:#40916c;margin-top:8px">🔥 '+str+' өдрийн streak</div></div><div style="font-size:14px;font-weight:800;margin-bottom:12px">🎖️ Badge</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+bdg+'</div></div>';
-}
-
-// TROPHY
-var ttab='ch';
-var CHS=[{title:'Намрын 100км',icon:'🍂',goal:100,unit:'км',field:'totalKm',p:312,reward:'🏅 Намрын баатар'},{title:'30 хоногийн streak',icon:'🔥',goal:30,unit:'өдөр',field:'streak',p:87,reward:'⭐ Streak мастер'},{title:'CO₂ 20кг хэмнэ',icon:'🌍',goal:20,unit:'кг CO₂',field:'totalCO2',p:156,reward:'🌿 Ногоон дайчин'},{title:'Дугуйгаар 50км',icon:'🚴',goal:50,unit:'км',field:'totalKm',p:203,reward:'🚴 Дугуйч'}];
-function rTrophy(){
-  var c1=ttab==='ch'?'on':'',c2=ttab==='lb'?'on':'';
-  var el=document.getElementById('content');
-  el.innerHTML='<div style="padding:18px 14px 32px"><div style="font-size:20px;font-weight:900;margin-bottom:14px">🏆 Тэмцээн</div><div class="tbar" id="tbtns"></div><div id="tc"></div></div>';
-  var tb=document.getElementById('tbtns');
-  var b1=document.createElement('button');b1.className=c1;b1.textContent='🏅 Зорилго';b1.onclick=function(){setTT('ch')};tb.appendChild(b1);
-  var b2=document.createElement('button');b2.className=c2;b2.textContent='🥇 Тэргүүлэгч';b2.onclick=function(){setTT('lb')};tb.appendChild(b2);
-  rTC();
-}
-function setTT(t){ttab=t;rTrophy()}
-function rTC(){
-  var tc=document.getElementById('tc');if(!tc)return;
-  if(ttab==='ch'){
-    tc.innerHTML=CHS.map(function(ch,i){var v=cu[ch.field]||0,pct=Math.min(v/ch.goal,1),done=pct>=1;return'<div class="gc fu" style="padding:15px 16px;margin-bottom:12px;background:'+(done?'rgba(82,183,136,.1)':'rgba(255,255,255,.04)')+';border-color:'+(done?'rgba(82,183,136,.3)':'rgba(255,255,255,.08)')+';animation-delay:'+(i*.08)+'s"><div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px"><div style="font-size:30px;flex-shrink:0">'+ch.icon+'</div><div style="flex:1"><div style="font-size:14px;font-weight:800">'+ch.title+'</div><div style="font-size:11px;color:#40916c;margin-top:2px">👥 '+ch.p+' оролцогч</div><div style="font-size:11px;color:#c8a84b;margin-top:3px">🎁 '+ch.reward+'</div></div>'+(done?'<div style="background:linear-gradient(135deg,#c8a84b,#8a6000);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;flex-shrink:0">✅ Гүйцэтгэсэн!</div>':'')+'</div><div class="prog"><div class="progf" style="width:'+Math.round(pct*100)+'%"></div></div><div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px"><span style="color:#52b788;font-weight:700">'+v+' '+ch.unit+'</span><span style="color:rgba(255,255,255,.4)">/ '+ch.goal+' '+ch.unit+' · '+Math.round(pct*100)+'%</span></div></div>'}).join('');
-  } else {
-    var us=Object.values(S.g('ng_users',{})).sort(function(a,b){return(b.totalKm||0)-(a.totalKm||0)});
-    var rank=us.findIndex(function(u){return u.email===cu.email})+1;
-    var med=['🥇','🥈','🥉'];
-    tc.innerHTML=(rank>0?'<div class="gc" style="padding:12px 14px;margin-bottom:14px;background:rgba(200,168,75,.12);border-color:rgba(200,168,75,.25)"><div style="font-size:11px;color:#c8a84b;font-weight:700;margin-bottom:2px">ТАНЫ БАЙРЛАЛ</div><div style="font-size:24px;font-weight:900">#'+rank+' <span style="font-size:13px;color:#c8a84b">/ '+us.length+' хэрэглэгч</span></div></div>':'')+us.slice(0,10).map(function(u,i){var me=u.email===cu.email;return'<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:8px;border-radius:16px;background:'+(me?'rgba(82,183,136,.12)':'rgba(255,255,255,.04)')+';border:1px solid '+(me?'rgba(82,183,136,.3)':'rgba(255,255,255,.07)')+'"><div style="width:28px;text-align:center;font-size:'+(i<3?20:14)+'px;font-weight:900;color:'+(i<3?'#fff':'rgba(255,255,255,.35)')+';flex-shrink:0">'+(i<3?med[i]:'#'+(i+1))+'</div>'+av(u.avatar||u.name[0],38)+'<div style="flex:1"><div style="font-weight:800;font-size:13px">'+u.name+(me?' <span style="font-size:10px;color:#52b788">· Би</span>':'')+'</div><div style="font-size:10px;color:#40916c;margin-top:1px">📍'+u.city+' · 💎'+(u.greenPoints||0)+'оноо</div></div><div style="text-align:right"><div style="font-size:15px;font-weight:900">'+(u.totalKm||0)+'<span style="font-size:10px;color:#40916c"> км</span></div><div style="font-size:10px;color:#52b788">🌿'+(u.totalCO2||0)+'кг</div></div></div>'}).join('');
-  }
-}
-
-// PROFILE
-function aEm(t){return t==='Гүйлт'?'🏃':t==='Дугуй'?'🚴':t==='Уулчлал'?'⛰️':'🚶'}
-function rProf(){
-  var u=cu,eb=earnedB(u),us2=S.g('ng_users',{});
-  var fr=(u.friends||[]).map(function(e){return us2[e]}).filter(Boolean);
-  var acts=(u.activities||[]).slice(0,5);
-  var notif=S.g('ng_notif',true);
-  document.getElementById('content').innerHTML='<div style="padding-bottom:32px"><div style="background:linear-gradient(160deg,#0d2818,#1a3d2b,#2d6a4f);padding:26px 18px 72px;position:relative;overflow:hidden"><div style="position:absolute;width:220px;height:220px;border-radius:50%;background:#52b788;filter:blur(80px);top:-80px;left:120px;opacity:.12"></div><div style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:12px">'+av(u.avatar||u.name[0],62)+'<div style="flex:1;min-width:0"><div style="font-size:20px;font-weight:900;margin-bottom:4px">'+u.name+'</div><div style="font-size:11px;color:#95d5b2;margin-bottom:3px">📍 '+u.city+'</div><div style="font-size:10px;color:rgba(255,255,255,.35)">'+u.email+' · '+u.joined+'</div></div><button onclick="tgEdit()" id="ebtn" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:11px;padding:7px 13px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0">✏️ Засах</button></div></div><div style="margin:-50px 14px 0;position:relative;z-index:2"><div class="gc" style="padding:13px 10px;background:rgba(13,40,24,.93)"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'+[{v:u.totalKm||0,u:'км'},{v:u.totalCO2||0,u:'кг CO₂'},{v:u.streak||0,u:'streak'},{v:u.greenPoints||0,u:'💎оноо'}].map(function(s){return'<div style="text-align:center"><div style="font-size:15px;font-weight:900">'+s.v+'</div><div style="font-size:9px;color:#52b788;font-weight:700;margin-top:1px">'+s.u+'</div></div>'}).join('')+'</div></div></div><div id="epanel" style="display:none;margin:12px 14px 0"><div class="gc" style="padding:14px;background:rgba(255,255,255,.04)"><label class="lbl">НЭР</label><input id="ename" class="inp" value="'+u.name+'" style="margin-bottom:10px"/><label class="lbl">ХОТ</label><input id="ecity" class="inp" value="'+u.city+'" style="margin-bottom:10px"/><label class="lbl">ТУХАЙ</label><textarea id="ebio" class="inp" rows="3" style="resize:none;margin-bottom:10px">'+( u.bio||'')+'</textarea><button onclick="savProf()" class="bp">💾 Хадгалах</button></div></div><div style="margin:12px 14px 0"><div class="gc" style="padding:14px;background:rgba(255,255,255,.04)"><div class="lbl">ТУХАЙ</div><div style="font-size:13px;color:#d8f3dc;line-height:1.6">'+(u.bio||'<span style="color:rgba(255,255,255,.25)">Өөрийгөө товч танилцуулаарай ✏️</span>')+'</div></div></div>'+(eb.length?'<div style="margin:12px 14px 0"><div class="lbl" style="margin-bottom:8px">🎖️ МИНИЙ BADGE ('+eb.length+')</div><div style="display:flex;gap:8px;flex-wrap:wrap">'+eb.map(function(b){return'<div style="background:rgba(82,183,136,.12);border:1px solid rgba(82,183,136,.25);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:6px"><span style="font-size:18px">'+b.icon+'</span><div style="font-size:11px;font-weight:700">'+b.name+'</div></div>'}).join('')+'</div></div>':'')+'<div style="margin:12px 14px 0"><div class="gc" style="padding:14px;background:rgba(255,255,255,.04)"><div class="lbl">👥 НАЙЗУУД ('+fr.length+')</div>'+fr.map(function(f){return'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+av(f.avatar||f.name[0],36)+'<div style="flex:1"><div style="font-size:12px;font-weight:700">'+f.name+'</div><div style="font-size:10px;color:#40916c">🏃'+(f.totalKm||0)+'км · 💎'+(f.greenPoints||0)+'оноо</div></div></div>'}).join('')+'<div style="display:flex;gap:8px;margin-top:'+(fr.length?'10':'0')+'px"><input id="femail" class="inp" placeholder="Найзын имэйл..." style="font-size:12px"/><button onclick="addFr()" style="background:linear-gradient(135deg,#52b788,#40916c);border:none;border-radius:10px;padding:9px 14px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">+ Нэмэх</button></div><div id="fmsg" style="font-size:11px;margin-top:6px"></div></div></div>'+(acts.length?'<div style="margin:12px 14px 0"><div class="lbl" style="margin-bottom:8px">МИНИЙ ҮЙЛДЛҮҮД</div>'+acts.map(function(a){return'<div style="background:rgba(255,255,255,.04);border-radius:14px;padding:11px 13px;margin-bottom:8px;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:9px"><span style="font-size:18px">'+aEm(a.type)+'</span><div style="flex:1"><div style="font-size:12px;font-weight:700">'+a.title+'</div><div style="font-size:10px;color:#40916c">'+a.distance+' · '+a.time+'</div></div><div style="font-size:10px;color:#52b788;font-weight:700">🌱'+a.co2+'кг</div></div>'}).join('')+'</div>':'')+'<div style="margin:12px 14px 0"><div class="gc" style="padding:13px 16px;background:rgba(255,255,255,.04)"><div class="lbl">ТОХИРГОО</div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">🔔</span><span style="font-size:13px;font-weight:600">Мэдэгдэл</span></div><button onclick="tgN()" id="ntog" style="width:44px;height:24px;border-radius:12px;border:none;background:'+(notif?'linear-gradient(135deg,#52b788,#40916c)':'rgba(255,255,255,.15)')+';cursor:pointer;position:relative"><div style="position:absolute;top:2px;left:'+(notif?'22':'2')+'px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div></button></div><div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-size:18px">🌐</span><span style="flex:1;font-size:13px;font-weight:600">Хэл</span><span style="font-size:11px;color:#40916c">Монгол ›</span></div></div></div><div style="margin:16px 14px 0"><button onclick="logout()" style="width:100%;padding:13px;border-radius:13px;border:1px solid rgba(229,57,53,.25);background:rgba(229,57,53,.12);color:#e53935;font-weight:800;font-size:13px;cursor:pointer">🚪 Системээс гарах</button></div></div>';
-}
-var _editing=false;
-function tgEdit(){_editing=!_editing;document.getElementById('epanel').style.display=_editing?'block':'none';document.getElementById('ebtn').textContent=_editing?'Болих':'✏️ Засах'}
-function savProf(){
-  var n=document.getElementById('ename'),c=document.getElementById('ecity'),b=document.getElementById('ebio');
-  if(n)cu.name=n.value;if(c)cu.city=c.value;if(b)cu.bio=b.value;
-  saveU();_editing=false;rProf();
-}
-function addFr(){
-  var fe=document.getElementById('femail'),msg=document.getElementById('fmsg');
-  if(!fe)return;
-  var e=fe.value,us=S.g('ng_users',{});
-  if(!us[e]){if(msg){msg.style.color='#ff8a80';msg.textContent='Хэрэглэгч олдсонгүй'} return}
-  if(e===cu.email){if(msg){msg.style.color='#ff8a80';msg.textContent='Өөрийгөө нэмэх боломжгүй'} return}
-  if((cu.friends||[]).indexOf(e)>=0){if(msg){msg.style.color='#ff8a80';msg.textContent='Аль хэдийн найзууд байна'} return}
-  cu.friends=(cu.friends||[]).concat([e]);saveU();
-  if(msg){msg.style.color='#52b788';msg.textContent='✅ '+us[e].name+' найзаар нэмэгдлээ!'}
-  setTimeout(function(){rProf()},1500);
-}
-function tgN(){var v=!S.g('ng_notif',true);S.s('ng_notif',v);var t=document.getElementById('ntog');if(t){t.style.background=v?'linear-gradient(135deg,#52b788,#40916c)':'rgba(255,255,255,.15)';var k=t.querySelector('div');if(k)k.style.left=v?'22px':'2px'}}
-
-// ADMIN
-function renderAdmin(){
-  document.querySelector('.nav').style.display='none';
-  var us=Object.values(S.g('ng_users',{}));
-  var tA=us.reduce(function(s,u){return s+(u.activities||[]).length},0);
-  var tK=us.reduce(function(s,u){return s+(u.totalKm||0)},0).toFixed(1);
-  var tC=us.reduce(function(s,u){return s+(u.totalCO2||0)},0).toFixed(1);
-  var el=document.getElementById('content');
-  el.innerHTML='';
-  
-  // Header
-  var hdr=document.createElement('div');
-  hdr.style.cssText='background:rgba(13,40,24,.97);padding:13px 16px;border-bottom:1px solid rgba(200,168,75,.2);display:flex;align-items:center;gap:10px';
-  hdr.innerHTML='<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8a84b,#8a6000);display:flex;align-items:center;justify-content:center;font-size:15px">👑</div><div style="flex:1"><div style="font-size:9px;letter-spacing:3px;color:#c8a84b;font-weight:700">ADMIN</div><div style="font-size:15px;font-weight:900">НогоонГүй удирдлага</div></div>';
-  var logbtn=document.createElement('button');
-  logbtn.style.cssText='background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.2);border-radius:10px;padding:6px 11px;color:#e53935;font-size:11px;font-weight:700;cursor:pointer';
-  logbtn.textContent='🚪';logbtn.onclick=aLogout;
-  hdr.appendChild(logbtn);el.appendChild(hdr);
-  
-  // Content
-  var body=document.createElement('div');
-  body.style.cssText='padding:16px 14px 32px';
-  var stats=[{l:'Хэрэглэгч',v:us.length,i:'👥',c:'#52b788'},{l:'Үйлдэл',v:tA,i:'🏃',c:'#95d5b2'},{l:'Нийт зай',v:tK+'км',i:'📍',c:'#c8a84b'},{l:'CO₂',v:tC+'кг',i:'🌍',c:'#81c784'}];
-  var grid='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+stats.map(function(c){return'<div class="gc" style="padding:13px 12px"><div style="font-size:22px;margin-bottom:5px">'+c.i+'</div><div style="font-size:20px;font-weight:900">'+c.v+'</div><div style="font-size:10px;color:'+c.c+';font-weight:700;margin-top:1px">'+c.l+'</div></div>'}).join('')+'</div>';
-  var usersHTML=us.sort(function(a,b){return(b.totalKm||0)-(a.totalKm||0)}).map(function(u){return'<div class="gc" style="padding:12px 13px;margin-bottom:9px"><div style="display:flex;align-items:center;gap:10px">'+av(u.avatar||u.name[0],38)+'<div style="flex:1"><div style="font-weight:800;font-size:13px">'+u.name+'</div><div style="font-size:10px;color:rgba(255,255,255,.35)">'+u.email+'</div><div style="font-size:10px;color:#40916c;margin-top:2px">📍'+u.city+' · 🔥'+(u.streak||0)+' · 💎'+(u.greenPoints||0)+'</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:900">'+(u.totalKm||0)+'км</div><div style="font-size:10px;color:#52b788">'+(u.totalCO2||0)+'кг</div><button data-em="'+u.email+'" class="delbtn2" style="margin-top:4px;background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.2);border-radius:7px;padding:4px 8px;color:#e53935;font-size:10px;cursor:pointer">🗑️</button></div></div></div>'}).join('');
-  body.innerHTML=grid+'<div class="lbl" style="margin-bottom:10px">👥 ХЭРЭГЛЭГЧИД</div>'+usersHTML;
-  el.appendChild(body);
-  
-  // Wire delete buttons
-  el.querySelectorAll('.delbtn2').forEach(function(b){b.onclick=function(){delU(b.dataset.em)}});
-}
-function delU(e){if(!confirm(e+' устгах уу?'))return;var u=S.g('ng_users',{});delete u[e];S.s('ng_users',u);renderAdmin()}
-function aLogout(){S.s('ng_current','');cu=null;document.querySelector('.nav').style.display='flex';logout()}
-
-// INIT
-initSeed();
-var se=S.g('ng_current','');
-if(se){
-  if(se===ADMIN_EMAIL){loginAs({name:ADMIN_NAME,email:ADMIN_EMAIL,avatar:'Г',isAdmin:true})}
-  else{var su=S.g('ng_users',{})[se];if(su)loginAs(su);else showAuth()}
-}else{showAuth()}
-</script>
-</body>
-</html>
-// MAP
 import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Polyline, useMap, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -771,3 +659,115 @@ export default function MapPage() {
     </div>
   );
 }
+
+}
+
+// STATS
+function rStats(){
+  var u=cu,eb=earnedB(u),str=u.streak||0;
+  var wd=[28,45,0,62,38,71,55],wl=['Да','Мя','Лх','Пү','Ба','Бя','Ня'];
+  var mx=Math.max.apply(null,wd);
+  var bars=wd.map(function(v,i){return'<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;border-radius:5px 5px 0 0;height:'+(mx?Math.round(v/mx*72):4)+'px;background:'+(v>0?'linear-gradient(180deg,#52b788,#0d2818)':'rgba(255,255,255,.08)')+'"></div><div style="font-size:9px;color:#40916c;font-weight:700">'+wl[i]+'</div></div>'}).join('');
+  var cal=[...Array(28)].map(function(_,i){return'<div style="aspect-ratio:1;border-radius:4px;background:'+(i>=(28-str)?'linear-gradient(135deg,#52b788,#40916c)':'rgba(255,255,255,.06)')+';box-shadow:'+(i>=(28-str)?'0 2px 6px rgba(82,183,136,.3)':'none')+'"></div>'}).join('');
+  var bdg=BADGES.map(function(b){var g=eb.find(function(e){return e.id===b.id});return'<div class="gc" style="padding:12px 13px;background:'+(g?'rgba(82,183,136,.1)':'rgba(255,255,255,.03)')+';border-color:'+(g?'rgba(82,183,136,.25)':'rgba(255,255,255,.06)')+';opacity:'+(g?1:.45)+'"><div style="font-size:22px;margin-bottom:5px">'+b.icon+'</div><div style="font-size:12px;font-weight:800">'+b.name+'</div>'+(g?'<div style="margin-top:5px;font-size:9px;color:#52b788;font-weight:700">✓ Гүйцэтгэсэн</div>':'')+'</div>'}).join('');
+  document.getElementById('content').innerHTML='<div style="padding:18px 14px 32px"><div style="font-size:20px;font-weight:900;margin-bottom:16px">📊 Статистик</div><div class="gc" style="padding:16px 14px;margin-bottom:14px;background:rgba(255,255,255,.04)"><div style="font-size:12px;font-weight:800;margin-bottom:14px">7 хоногийн идэвх (мин)</div><div style="display:flex;align-items:flex-end;gap:8px;height:80px">'+bars+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'+[{l:'Нийт зай',v:(u.totalKm||0),u:'км',i:'🏃'},{l:'CO₂ хэмнэлт',v:(u.totalCO2||0),u:'кг',i:'🌍'},{l:'Ногоон оноо',v:(u.greenPoints||0),u:'оноо',i:'💎'},{l:'Streak',v:str,u:'өдөр',i:'🔥'},{l:'Үйл ажиллагаа',v:(u.activities||[]).length,u:'удаа',i:'✅'},{l:'Badge',v:eb.length+'/'+BADGES.length,u:'',i:'🎖️'}].map(function(s){return'<div class="gc" style="padding:13px 12px;background:rgba(255,255,255,.04)"><div style="font-size:20px;margin-bottom:5px">'+s.i+'</div><div style="font-size:20px;font-weight:900">'+s.v+' <span style="font-size:11px;color:#40916c;font-weight:600">'+s.u+'</span></div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">'+s.l+'</div></div>'}).join('')+'</div><div class="gc" style="padding:14px;margin-bottom:14px;background:rgba(255,255,255,.04)"><div style="font-size:12px;font-weight:800;margin-bottom:12px">🔥 Streak хуанли</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">'+cal+'</div><div style="font-size:11px;color:#40916c;margin-top:8px">🔥 '+str+' өдрийн streak</div></div><div style="font-size:14px;font-weight:800;margin-bottom:12px">🎖️ Badge</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+bdg+'</div></div>';
+}
+
+// TROPHY
+var ttab='ch';
+var CHS=[{title:'Намрын 100км',icon:'🍂',goal:100,unit:'км',field:'totalKm',p:312,reward:'🏅 Намрын баатар'},{title:'30 хоногийн streak',icon:'🔥',goal:30,unit:'өдөр',field:'streak',p:87,reward:'⭐ Streak мастер'},{title:'CO₂ 20кг хэмнэ',icon:'🌍',goal:20,unit:'кг CO₂',field:'totalCO2',p:156,reward:'🌿 Ногоон дайчин'},{title:'Дугуйгаар 50км',icon:'🚴',goal:50,unit:'км',field:'totalKm',p:203,reward:'🚴 Дугуйч'}];
+function rTrophy(){
+  var c1=ttab==='ch'?'on':'',c2=ttab==='lb'?'on':'';
+  var el=document.getElementById('content');
+  el.innerHTML='<div style="padding:18px 14px 32px"><div style="font-size:20px;font-weight:900;margin-bottom:14px">🏆 Тэмцээн</div><div class="tbar" id="tbtns"></div><div id="tc"></div></div>';
+  var tb=document.getElementById('tbtns');
+  var b1=document.createElement('button');b1.className=c1;b1.textContent='🏅 Зорилго';b1.onclick=function(){setTT('ch')};tb.appendChild(b1);
+  var b2=document.createElement('button');b2.className=c2;b2.textContent='🥇 Тэргүүлэгч';b2.onclick=function(){setTT('lb')};tb.appendChild(b2);
+  rTC();
+}
+function setTT(t){ttab=t;rTrophy()}
+function rTC(){
+  var tc=document.getElementById('tc');if(!tc)return;
+  if(ttab==='ch'){
+    tc.innerHTML=CHS.map(function(ch,i){var v=cu[ch.field]||0,pct=Math.min(v/ch.goal,1),done=pct>=1;return'<div class="gc fu" style="padding:15px 16px;margin-bottom:12px;background:'+(done?'rgba(82,183,136,.1)':'rgba(255,255,255,.04)')+';border-color:'+(done?'rgba(82,183,136,.3)':'rgba(255,255,255,.08)')+';animation-delay:'+(i*.08)+'s"><div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px"><div style="font-size:30px;flex-shrink:0">'+ch.icon+'</div><div style="flex:1"><div style="font-size:14px;font-weight:800">'+ch.title+'</div><div style="font-size:11px;color:#40916c;margin-top:2px">👥 '+ch.p+' оролцогч</div><div style="font-size:11px;color:#c8a84b;margin-top:3px">🎁 '+ch.reward+'</div></div>'+(done?'<div style="background:linear-gradient(135deg,#c8a84b,#8a6000);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;flex-shrink:0">✅ Гүйцэтгэсэн!</div>':'')+'</div><div class="prog"><div class="progf" style="width:'+Math.round(pct*100)+'%"></div></div><div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px"><span style="color:#52b788;font-weight:700">'+v+' '+ch.unit+'</span><span style="color:rgba(255,255,255,.4)">/ '+ch.goal+' '+ch.unit+' · '+Math.round(pct*100)+'%</span></div></div>'}).join('');
+  } else {
+    var us=Object.values(S.g('ng_users',{})).sort(function(a,b){return(b.totalKm||0)-(a.totalKm||0)});
+    var rank=us.findIndex(function(u){return u.email===cu.email})+1;
+    var med=['🥇','🥈','🥉'];
+    tc.innerHTML=(rank>0?'<div class="gc" style="padding:12px 14px;margin-bottom:14px;background:rgba(200,168,75,.12);border-color:rgba(200,168,75,.25)"><div style="font-size:11px;color:#c8a84b;font-weight:700;margin-bottom:2px">ТАНЫ БАЙРЛАЛ</div><div style="font-size:24px;font-weight:900">#'+rank+' <span style="font-size:13px;color:#c8a84b">/ '+us.length+' хэрэглэгч</span></div></div>':'')+us.slice(0,10).map(function(u,i){var me=u.email===cu.email;return'<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:8px;border-radius:16px;background:'+(me?'rgba(82,183,136,.12)':'rgba(255,255,255,.04)')+';border:1px solid '+(me?'rgba(82,183,136,.3)':'rgba(255,255,255,.07)')+'"><div style="width:28px;text-align:center;font-size:'+(i<3?20:14)+'px;font-weight:900;color:'+(i<3?'#fff':'rgba(255,255,255,.35)')+';flex-shrink:0">'+(i<3?med[i]:'#'+(i+1))+'</div>'+av(u.avatar||u.name[0],38)+'<div style="flex:1"><div style="font-weight:800;font-size:13px">'+u.name+(me?' <span style="font-size:10px;color:#52b788">· Би</span>':'')+'</div><div style="font-size:10px;color:#40916c;margin-top:1px">📍'+u.city+' · 💎'+(u.greenPoints||0)+'оноо</div></div><div style="text-align:right"><div style="font-size:15px;font-weight:900">'+(u.totalKm||0)+'<span style="font-size:10px;color:#40916c"> км</span></div><div style="font-size:10px;color:#52b788">🌿'+(u.totalCO2||0)+'кг</div></div></div>'}).join('');
+  }
+}
+
+// PROFILE
+function aEm(t){return t==='Гүйлт'?'🏃':t==='Дугуй'?'🚴':t==='Уулчлал'?'⛰️':'🚶'}
+function rProf(){
+  var u=cu,eb=earnedB(u),us2=S.g('ng_users',{});
+  var fr=(u.friends||[]).map(function(e){return us2[e]}).filter(Boolean);
+  var acts=(u.activities||[]).slice(0,5);
+  var notif=S.g('ng_notif',true);
+  document.getElementById('content').innerHTML='<div style="padding-bottom:32px"><div style="background:linear-gradient(160deg,#0d2818,#1a3d2b,#2d6a4f);padding:26px 18px 72px;position:relative;overflow:hidden"><div style="position:absolute;width:220px;height:220px;border-radius:50%;background:#52b788;filter:blur(80px);top:-80px;left:120px;opacity:.12"></div><div style="position:relative;z-index:1;display:flex;align-items:flex-start;gap:12px">'+av(u.avatar||u.name[0],62)+'<div style="flex:1;min-width:0"><div style="font-size:20px;font-weight:900;margin-bottom:4px">'+u.name+'</div><div style="font-size:11px;color:#95d5b2;margin-bottom:3px">📍 '+u.city+'</div><div style="font-size:10px;color:rgba(255,255,255,.35)">'+u.email+' · '+u.joined+'</div></div><button onclick="tgEdit()" id="ebtn" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:11px;padding:7px 13px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0">✏️ Засах</button></div></div><div style="margin:-50px 14px 0;position:relative;z-index:2"><div class="gc" style="padding:13px 10px;background:rgba(13,40,24,.93)"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'+[{v:u.totalKm||0,u:'км'},{v:u.totalCO2||0,u:'кг CO₂'},{v:u.streak||0,u:'streak'},{v:u.greenPoints||0,u:'💎оноо'}].map(function(s){return'<div style="text-align:center"><div style="font-size:15px;font-weight:900">'+s.v+'</div><div style="font-size:9px;color:#52b788;font-weight:700;margin-top:1px">'+s.u+'</div></div>'}).join('')+'</div></div></div><div id="epanel" style="display:none;margin:12px 14px 0"><div class="gc" style="padding:14px;background:rgba(255,255,255,.04)"><label class="lbl">НЭР</label><input id="ename" class="inp" value="'+u.name+'" style="margin-bottom:10px"/><label class="lbl">ХОТ</label><input id="ecity" class="inp" value="'+u.city+'" style="margin-bottom:10px"/><label class="lbl">ТУХАЙ</label><textarea id="ebio" class="inp" rows="3" style="resize:none;margin-bottom:10px">'+( u.bio||'')+'</textarea><button onclick="savProf()" class="bp">💾 Хадгалах</button></div></div><div style="margin:12px 14px 0"><div class="gc" style="padding:14px;background:rgba(255,255,255,.04)"><div class="lbl">ТУХАЙ</div><div style="font-size:13px;color:#d8f3dc;line-height:1.6">'+(u.bio||'<span style="color:rgba(255,255,255,.25)">Өөрийгөө товч танилцуулаарай ✏️</span>')+'</div></div></div>'+(eb.length?'<div style="margin:12px 14px 0"><div class="lbl" style="margin-bottom:8px">🎖️ МИНИЙ BADGE ('+eb.length+')</div><div style="display:flex;gap:8px;flex-wrap:wrap">'+eb.map(function(b){return'<div style="background:rgba(82,183,136,.12);border:1px solid rgba(82,183,136,.25);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:6px"><span style="font-size:18px">'+b.icon+'</span><div style="font-size:11px;font-weight:700">'+b.name+'</div></div>'}).join('')+'</div></div>':'')+'<div style="margin:12px 14px 0"><div class="gc" style="padding:14px;background:rgba(255,255,255,.04)"><div class="lbl">👥 НАЙЗУУД ('+fr.length+')</div>'+fr.map(function(f){return'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+av(f.avatar||f.name[0],36)+'<div style="flex:1"><div style="font-size:12px;font-weight:700">'+f.name+'</div><div style="font-size:10px;color:#40916c">🏃'+(f.totalKm||0)+'км · 💎'+(f.greenPoints||0)+'оноо</div></div></div>'}).join('')+'<div style="display:flex;gap:8px;margin-top:'+(fr.length?'10':'0')+'px"><input id="femail" class="inp" placeholder="Найзын имэйл..." style="font-size:12px"/><button onclick="addFr()" style="background:linear-gradient(135deg,#52b788,#40916c);border:none;border-radius:10px;padding:9px 14px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">+ Нэмэх</button></div><div id="fmsg" style="font-size:11px;margin-top:6px"></div></div></div>'+(acts.length?'<div style="margin:12px 14px 0"><div class="lbl" style="margin-bottom:8px">МИНИЙ ҮЙЛДЛҮҮД</div>'+acts.map(function(a){return'<div style="background:rgba(255,255,255,.04);border-radius:14px;padding:11px 13px;margin-bottom:8px;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:9px"><span style="font-size:18px">'+aEm(a.type)+'</span><div style="flex:1"><div style="font-size:12px;font-weight:700">'+a.title+'</div><div style="font-size:10px;color:#40916c">'+a.distance+' · '+a.time+'</div></div><div style="font-size:10px;color:#52b788;font-weight:700">🌱'+a.co2+'кг</div></div>'}).join('')+'</div>':'')+'<div style="margin:12px 14px 0"><div class="gc" style="padding:13px 16px;background:rgba(255,255,255,.04)"><div class="lbl">ТОХИРГОО</div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">🔔</span><span style="font-size:13px;font-weight:600">Мэдэгдэл</span></div><button onclick="tgN()" id="ntog" style="width:44px;height:24px;border-radius:12px;border:none;background:'+(notif?'linear-gradient(135deg,#52b788,#40916c)':'rgba(255,255,255,.15)')+';cursor:pointer;position:relative"><div style="position:absolute;top:2px;left:'+(notif?'22':'2')+'px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 2px 4px rgba(0,0,0,.3)"></div></button></div><div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-size:18px">🌐</span><span style="flex:1;font-size:13px;font-weight:600">Хэл</span><span style="font-size:11px;color:#40916c">Монгол ›</span></div></div></div><div style="margin:16px 14px 0"><button onclick="logout()" style="width:100%;padding:13px;border-radius:13px;border:1px solid rgba(229,57,53,.25);background:rgba(229,57,53,.12);color:#e53935;font-weight:800;font-size:13px;cursor:pointer">🚪 Системээс гарах</button></div></div>';
+}
+var _editing=false;
+function tgEdit(){_editing=!_editing;document.getElementById('epanel').style.display=_editing?'block':'none';document.getElementById('ebtn').textContent=_editing?'Болих':'✏️ Засах'}
+function savProf(){
+  var n=document.getElementById('ename'),c=document.getElementById('ecity'),b=document.getElementById('ebio');
+  if(n)cu.name=n.value;if(c)cu.city=c.value;if(b)cu.bio=b.value;
+  saveU();_editing=false;rProf();
+}
+function addFr(){
+  var fe=document.getElementById('femail'),msg=document.getElementById('fmsg');
+  if(!fe)return;
+  var e=fe.value,us=S.g('ng_users',{});
+  if(!us[e]){if(msg){msg.style.color='#ff8a80';msg.textContent='Хэрэглэгч олдсонгүй'} return}
+  if(e===cu.email){if(msg){msg.style.color='#ff8a80';msg.textContent='Өөрийгөө нэмэх боломжгүй'} return}
+  if((cu.friends||[]).indexOf(e)>=0){if(msg){msg.style.color='#ff8a80';msg.textContent='Аль хэдийн найзууд байна'} return}
+  cu.friends=(cu.friends||[]).concat([e]);saveU();
+  if(msg){msg.style.color='#52b788';msg.textContent='✅ '+us[e].name+' найзаар нэмэгдлээ!'}
+  setTimeout(function(){rProf()},1500);
+}
+function tgN(){var v=!S.g('ng_notif',true);S.s('ng_notif',v);var t=document.getElementById('ntog');if(t){t.style.background=v?'linear-gradient(135deg,#52b788,#40916c)':'rgba(255,255,255,.15)';var k=t.querySelector('div');if(k)k.style.left=v?'22px':'2px'}}
+
+// ADMIN
+function renderAdmin(){
+  document.querySelector('.nav').style.display='none';
+  var us=Object.values(S.g('ng_users',{}));
+  var tA=us.reduce(function(s,u){return s+(u.activities||[]).length},0);
+  var tK=us.reduce(function(s,u){return s+(u.totalKm||0)},0).toFixed(1);
+  var tC=us.reduce(function(s,u){return s+(u.totalCO2||0)},0).toFixed(1);
+  var el=document.getElementById('content');
+  el.innerHTML='';
+  
+  // Header
+  var hdr=document.createElement('div');
+  hdr.style.cssText='background:rgba(13,40,24,.97);padding:13px 16px;border-bottom:1px solid rgba(200,168,75,.2);display:flex;align-items:center;gap:10px';
+  hdr.innerHTML='<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8a84b,#8a6000);display:flex;align-items:center;justify-content:center;font-size:15px">👑</div><div style="flex:1"><div style="font-size:9px;letter-spacing:3px;color:#c8a84b;font-weight:700">ADMIN</div><div style="font-size:15px;font-weight:900">НогоонГүй удирдлага</div></div>';
+  var logbtn=document.createElement('button');
+  logbtn.style.cssText='background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.2);border-radius:10px;padding:6px 11px;color:#e53935;font-size:11px;font-weight:700;cursor:pointer';
+  logbtn.textContent='🚪';logbtn.onclick=aLogout;
+  hdr.appendChild(logbtn);el.appendChild(hdr);
+  
+  // Content
+  var body=document.createElement('div');
+  body.style.cssText='padding:16px 14px 32px';
+  var stats=[{l:'Хэрэглэгч',v:us.length,i:'👥',c:'#52b788'},{l:'Үйлдэл',v:tA,i:'🏃',c:'#95d5b2'},{l:'Нийт зай',v:tK+'км',i:'📍',c:'#c8a84b'},{l:'CO₂',v:tC+'кг',i:'🌍',c:'#81c784'}];
+  var grid='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'+stats.map(function(c){return'<div class="gc" style="padding:13px 12px"><div style="font-size:22px;margin-bottom:5px">'+c.i+'</div><div style="font-size:20px;font-weight:900">'+c.v+'</div><div style="font-size:10px;color:'+c.c+';font-weight:700;margin-top:1px">'+c.l+'</div></div>'}).join('')+'</div>';
+  var usersHTML=us.sort(function(a,b){return(b.totalKm||0)-(a.totalKm||0)}).map(function(u){return'<div class="gc" style="padding:12px 13px;margin-bottom:9px"><div style="display:flex;align-items:center;gap:10px">'+av(u.avatar||u.name[0],38)+'<div style="flex:1"><div style="font-weight:800;font-size:13px">'+u.name+'</div><div style="font-size:10px;color:rgba(255,255,255,.35)">'+u.email+'</div><div style="font-size:10px;color:#40916c;margin-top:2px">📍'+u.city+' · 🔥'+(u.streak||0)+' · 💎'+(u.greenPoints||0)+'</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:900">'+(u.totalKm||0)+'км</div><div style="font-size:10px;color:#52b788">'+(u.totalCO2||0)+'кг</div><button data-em="'+u.email+'" class="delbtn2" style="margin-top:4px;background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.2);border-radius:7px;padding:4px 8px;color:#e53935;font-size:10px;cursor:pointer">🗑️</button></div></div></div>'}).join('');
+  body.innerHTML=grid+'<div class="lbl" style="margin-bottom:10px">👥 ХЭРЭГЛЭГЧИД</div>'+usersHTML;
+  el.appendChild(body);
+  
+  // Wire delete buttons
+  el.querySelectorAll('.delbtn2').forEach(function(b){b.onclick=function(){delU(b.dataset.em)}});
+}
+function delU(e){if(!confirm(e+' устгах уу?'))return;var u=S.g('ng_users',{});delete u[e];S.s('ng_users',u);renderAdmin()}
+function aLogout(){S.s('ng_current','');cu=null;document.querySelector('.nav').style.display='flex';logout()}
+
+// INIT
+initSeed();
+var se=S.g('ng_current','');
+if(se){
+  if(se===ADMIN_EMAIL){loginAs({name:ADMIN_NAME,email:ADMIN_EMAIL,avatar:'Г',isAdmin:true})}
+  else{var su=S.g('ng_users',{})[se];if(su)loginAs(su);else showAuth()}
+}else{showAuth()}
+</script>
+</body>
+</html>
